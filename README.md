@@ -1,5 +1,5 @@
 # twitch_check
-Shell script to check if streamers are streaming or not (with notification).
+Shell script to check if stream is online or not (with notification).
 
 #Requirements
 Install curl and (optional) libnotify-bin
