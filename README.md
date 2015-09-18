@@ -14,8 +14,7 @@ twitch_check [OPTIONS] [FILE NAME]
 
 #Example
 ```bash
-$ ./twitch_check.sh -u=fattypillow -w=60 #check user "fattypillow" every 60seconds
-
+$ ./twitch_check.sh -u=fattypillow -w=60
 Checking stream of fattypillow ... offline 16:38:44
 Waiting 60 seconds to check again
 Checking stream of fattypillow ... offline 16:39:45
@@ -24,23 +23,22 @@ Checking stream of fattypillow ... offline 16:40:47
 ```
 ```bash
 $ ./twitch_check.sh -n favorite_twitch_users.txt #check users from file and show notification (require libnotify-bin)
-
 Checking stream of fattypillow ... offline 16:55:34
 Checking stream of flyguncz ... offline 16:55:35
 Checking stream of gogomantv ... offline 16:55:37
 Checking stream of warcraft ... offline 16:55:38
 Checking stream of nightblue3 ... online 16:55:39
 Checking stream of esl_joindotared ... online 16:55:41
-Checking stream of nonexisting_user ... error 16:55:42 #user "nonexisting_user" do not exist
+Checking stream of test_username ... error 16:55:42 #this user do not exist!
 ```
 
 #Example file with users
-##Just one user per line!
+####Just one user per line!
 
-fattypillow
-flyguncz
-gogomantv
-warcraft
-nightblue3
-esl_joindotared
-nonexisting_user
+fattypillow\
+flyguncz\
+gogomantv\
+warcraft\
+nightblue3\
+esl_joindotared\
+test_username
