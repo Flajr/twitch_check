@@ -31,14 +31,3 @@ Checking stream of nightblue3 ... online 16:55:39
 Checking stream of esl_joindotared ... online 16:55:41
 Checking stream of test_username ... error 16:55:42 #this user do not exist!
 ```
-
-#Example file with users
-####Just one user per line!
-
-fattypillow\n
-flyguncz\n
-gogomantv\n
-warcraft\n
-nightblue3\n
-esl_joindotared\n
-test_username
