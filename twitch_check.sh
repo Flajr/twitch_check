@@ -9,7 +9,7 @@ function usage()
 	echo "-n           show notification"
 	echo "-o           show online notify only (this use option -n too)"
 	echo "-u=[user]    check (one) user name (surpass file)"
-	echo "-w=[seconds] wait to check status again (without -w check just one time)(use 10s and more)" 
+	echo "-w=[seconds] wait seconds (>=10) to check status again, if only -w specified wait 4minutes (default)" 
 }
 
 #Send notification to desktop with "notify-send" part of libnotify-bin
@@ -45,15 +45,15 @@ function check_stream_of_user()
 	user_error=`echo "$stream_object" |grep "\"error\":"`
 
 	if [[ $user_check == "\"stream\":null" ]]; then
-		echo " offline"
+		echo " offline `date +%T`"
 		#first argument of notify func is status!
 		notify "offline"
 	else
 		if [[ -z $user_error ]]; then
-			echo " online"
+			echo " online `date +%T`"
 			notify "online"
 		else
-			echo " error"
+			echo " error `date +%T`"
 			notify "error"
 		fi
 	fi
@@ -84,7 +84,10 @@ do
 		notify_online=1
 		notify_var=1
 		;;
-
+		-w)
+		#default -w time is 4minutes
+		wait_to_check=240
+		;;
 		-w=[1-9][0-9]*)
 		#parsing just seconds (numbers) from variable $arg
 		wait_to_check=${arg/-w=}
