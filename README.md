@@ -1,8 +1,8 @@
 # twitch_check
-Shell script to check if stream is online or not (with notification).
+Check if your favorites streamers are online! Write names down in file and let program show notification for you if streamer came live.
 
 #Requirements
-Install 'curl' and (optional) 'libnotify-bin'
+Install 'curl' and (for notification) 'libnotify-bin'
 
 #Usage
 twitch_check [OPTIONS] [FILE NAME]
