@@ -5,7 +5,7 @@ Check if your favorites streamers are online! Write names down in file and let p
 Install 'curl' and (for notification) 'libnotify-bin'
 
 #Usage
-twitch_check [OPTIONS] [FILE NAME]
+twitch_check [OPTIONS]
 *	-f [FILE]    path to file with users names
 *   -h | --help  show usage
 *	-n           show notification
