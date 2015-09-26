@@ -128,12 +128,12 @@ do
 	elif [[ $no_file -eq 1 ]]; then
 		echo "NOT FOUND: $file_name"
 		exit 2
-	elif [[ -z $(cat $file_name) ]]; then
+	elif [[ -z $(cat $file_name |awk '{print $1}') ]]; then
 		echo "EMPTY: $file_name"
 		exit 3
 	else
 	#check stream of all users from file ($file_name)
-		for user in $(cat $file_name)
+		for user in $(cat $file_name |awk '{print $1}')
 		do
 			check_stream_of_user "$user"
 		done
