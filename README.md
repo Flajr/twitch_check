@@ -9,8 +9,8 @@ twitch_check [OPTIONS] [FILE NAME]
 *	-h | --help  show usage
 *	-n           show notification
 *	-o           show online notify only (this use option -n too)
-*	-u=[user]    check (one) user name (surpass file)
-*	-w=[seconds] wait seconds (>=10) to check status again, if only -w specified wait 4minutes (default)
+*	-u [USER]    check (one) user name (surpass file)
+*	-w=[SECONDS] wait seconds (>=10) to check status again, if only -w specified wait 4minutes (default)
 
 #Example
 ```bash

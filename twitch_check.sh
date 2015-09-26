@@ -5,11 +5,13 @@
 function usage()
 {
 	echo "twitch_check [OPTIONS] [FILE NAME]"
+	echo "-f [FILE]    path to file with users names"
 	echo "-h | --help  show usage"
 	echo "-n           show notification"
 	echo "-o           show online notify only (this use option -n too)"
-	echo "-u=[user]    check (one) user name (surpass file)"
-	echo "-w=[seconds] wait seconds (>=10) to check status again, if only -w specified wait 4minutes (default)" 
+	echo "-u [USER]    check (one) user name (surpass file)"
+	echo "-w [SECONDS] wait seconds (>=30) to check status again"
+	exit
 }
 
 #Send notification to desktop with "notify-send" part of libnotify-bin
@@ -59,74 +61,76 @@ function check_stream_of_user()
 	fi
 }
 
-#show usage if no arguments and exit
 if [[ $# -eq 0 ]]; then
 	usage
-	exit
 fi
 
-for arg in $@
-do
-	case $arg in
-		-n)
-		#create notifications as specified in usage
-		notify_var=1
+while getopts :now:u:f: opt; do
+	case $opt in
+		n)
+			#create notifications as specified in usage
+			notify_var=1
 		;;
 
-		-h|--help)
-		#usage of program specified in usage func
-		usage
-		exit
+		o)
+			#create notifications for online users only, automatic use argument -n
+			notify_online=1
+			notify_var=1
 		;;
 
-		-o)
-		#create notifications for online users only, automatic use argument -n
-		notify_online=1
-		notify_var=1
-		;;
-		-w)
-		#default -w time is 4minutes
-		wait_to_check=240
-		;;
-		-w=[1-9][0-9]*)
-		#parsing just seconds (numbers) from variable $arg
-		wait_to_check=${arg/-w=}
+		w)
+			if [[ $OPTARG =~ ^[3-9][0-9]+ ]]; then
+				wait_to_check=$OPTARG
+			else
+				echo "BAD PARAMETER: seconds >= 30"
+			fi
 		;;
 
-		-u=*)
-		user=${arg/-u=}
-		no_file="u_arg"
+		u)
+			user=$OPTARG
+			no_file=3
+		;;
+
+		f)	
+			#if -u flag specified surpass file (just continue)
+			if [[ $no_file -eq 3 ]]; then
+				continue
+			#check if $arg is readablefile
+			#if yes use file_name var
+			elif [[ -r $OPTARG ]]; then
+				file_name=$OPTARG
+				no_file=0
+			else
+				file_name=$OPTARG
+				no_file=1
+			fi
+		;;
+		
+		:)
+			echo "REQUIRE ARGUMENT: -$OPTARG"
 		;;
 
 		*)
-		#check if $arg is readablefile
-		#if yes use for it variable file_name
-		if [[ $no_file == "u_arg" ]]; then
-			continue
-		elif [[ -r $arg ]]; then
-			file_name=$arg
-			no_file=0
-		else
-			no_file=1
-		fi
+			echo "INVALID OPTION: -$OPTARG!"
+			usage
 		;;
 	esac
 
 done
 
-#no file specified
-if [[ $no_file -eq 1 ]]; then
-	exit 1
-fi
-
 #loop if -w is specified
 while :
 do
-	if [[ $no_file == "u_arg" ]]; then
+	if [[ $no_file -eq 3 ]]; then
 		check_stream_of_user "$user"
-	elif [[ $(cat $file_name) == "" ]]; then
-		echo "Nothing to check in file!"
+	elif [[ -z $file_name ]]; then
 		exit 1
+	elif [[ $no_file -eq 1 ]]; then
+		echo "NOT FOUND: $file_name"
+		exit 2
+	elif [[ -z $(cat $file_name) ]]; then
+		echo "EMPTY: $file_name"
+		exit 3
 	else
 	#check stream of all users from file ($file_name)
 		for user in $(cat $file_name)
