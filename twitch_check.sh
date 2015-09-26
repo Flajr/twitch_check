@@ -111,14 +111,13 @@ while getopts :now:u:f: opt; do
 		;;
 
 		*)
-			echo "INVALID OPTION: -$OPTARG!"
+			echo "INVALID OPTION: $OPTARG"
 			usage
 		;;
 	esac
 
 done
 
-#loop if -w is specified
 while :
 do
 	if [[ $no_file -eq 3 ]]; then
