@@ -3,7 +3,7 @@
 
 function usage()
 {
-	echo "$0 [ARGUMENTS] or [USER]"
+	echo "$0 [OPTIONS] or [USER]"
 	echo "-f [FILE]    path to file with users names"
 	echo "-h | --help  show usage"
 	echo "-n           show notification"
