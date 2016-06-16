@@ -1,17 +1,15 @@
-#!/bin/bash
-
+#!/bin/bash 
 [[ `id -u` -eq 0 ]] && echo "Do not run as root!" && exit
 
 function usage()
 {
-	echo "twitch_check [OPTIONS] [FILE NAME]"
+	echo "$0 [ARGUMENTS] or [USER]"
 	echo "-f [FILE]    path to file with users names"
 	echo "-h | --help  show usage"
 	echo "-n           show notification"
 	echo "-o           show online notify only (this use option -n too)"
 	echo "-u [USER]    check (one) user name (surpass file)"
 	echo "-w [SECONDS] wait seconds (>=30) to check status again"
-	exit
 }
 
 #Send notification to desktop with "notify-send" part of libnotify-bin
@@ -23,7 +21,8 @@ function notify()
 		elif [[ $1 == "error" && $notify_online -eq 1 ]]; then
 			stream_object=
 		else
-			#-t 10000 to show notification for 10s, print $user_name and status (online,offline,error)
+			#-t 10000 to show notification for 10s
+			#print $user_name and status (online,offline,error)
 			notify-send -t 10000 "$user_name $1"
 		fi
 	fi
@@ -38,7 +37,7 @@ function check_stream_of_user()
 	echo -n "Checking stream of $user_name ..."
 
 	#Returns a stream object if live
-	#from https://github.com/justintv/Twitch-API/blob/master/v3_resources/streams.md
+	#https://github.com/justintv/Twitch-API/blob/master/v3_resources/streams.md
 	stream_object=`curl -s -H 'Accept: application/vnd.twitchtv.v3+json' \
 	-X GET https://api.twitch.tv/kraken/streams/$user_name`
 
@@ -63,6 +62,7 @@ function check_stream_of_user()
 
 if [[ $# -eq 0 ]]; then
 	usage
+	exit 0
 fi
 
 while getopts :now:u:f: opt; do
@@ -83,64 +83,70 @@ while getopts :now:u:f: opt; do
 				wait_to_check=$OPTARG
 			else
 				echo "BAD PARAMETER: seconds >= 30"
+				exit 5
 			fi
 		;;
 
 		u)
 			user=$OPTARG
-			no_file=3
+			uoption=1
 		;;
 
 		f)	
 			#if -u flag specified surpass file (just continue)
-			if [[ $no_file -eq 3 ]]; then
+			if [[ $uoption -eq 1 ]]; then
 				continue
+			fi
+
 			#check if $arg is readablefile
 			#if yes use file_name var
-			elif [[ -r $OPTARG ]]; then
+			if [[ -r $OPTARG ]]; then
 				file_name=$OPTARG
-				no_file=0
 			else
-				file_name=$OPTARG
-				no_file=1
+				echo "NOT FOUND: $OPTARG"
+				exit 2
+			fi
+
+			if [[ ! -s $OPTARG ]]; then
+				echo "EMPTY: $OPTARG"
+				exit 3
 			fi
 		;;
 		
 		:)
 			echo "REQUIRE ARGUMENT: -$OPTARG"
+			exit 1
 		;;
 
 		*)
 			echo "INVALID OPTION: $OPTARG"
 			usage
+			exit 4
 		;;
 	esac
-
 done
 
 while :
 do
-	if [[ $no_file -eq 3 ]]; then
-		check_stream_of_user "$user"
-	elif [[ -z $file_name ]]; then
-		exit 1
-	elif [[ $no_file -eq 1 ]]; then
-		echo "NOT FOUND: $file_name"
-		exit 2
-	elif [[ -z $(cat $file_name |awk '{print $1}') ]]; then
-		echo "EMPTY: $file_name"
-		exit 3
-	else
+	if [[ -n $file_name ]]; then
 	#check stream of all users from file ($file_name)
-		for user in $(cat $file_name |awk '{print $1}')
-		do
+		for user in $(cat $file_name |awk '{print $1}'); do
 			check_stream_of_user "$user"
 		done
+	else
+		if [[ $# -eq 1 ]]; then
+			check_stream_of_user "$1"
+		elif [[ -n $user ]]; then
+			check_stream_of_user "$user"
+		else
+			echo "NO USER TO TEST"
+			exit 6
+		fi
 	fi
-	
-	#-w is not specified (empty)
+
+	#-w is not used (empty)
 	if [[ -z $wait_to_check ]]; then
-		exit	
+		exit 0
 	else
 		echo "Waiting $wait_to_check seconds to check again"
 		sleep $wait_to_check
