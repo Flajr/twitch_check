@@ -5,13 +5,15 @@ Check if your favorites streamers are online! Write names down in file and let p
 Install 'curl' and (optionaly for notification) 'libnotify-bin'
 
 #Usage
+```bash
 twitch_check [OPTIONS] or [USER]
-*	-f [FILE]    path to file with users names
-*   -h | --help  show usage
-*	-n           show notification
-*	-o           show online notify only (this use option -n too)
-*	-u [USER]    check (one) user name (surpass file)
-*	-w [SECONDS] wait seconds (>=30) to check status again
+-f [FILE]    path to file with users names
+-h | --help  show usage
+-n           show notification
+-o           show online notify only (this use option -n too)
+-u [USER]    check (one) user name (surpass file)
+-w [SECONDS] wait seconds (>=30) to check status again
+```
 
 #Example
 ```bash
