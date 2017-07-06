@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-[[ `id -u` -eq 0 ]] && echo "Do not run as root!" && exit
+[[ "$(id -u)" -eq 0 ]] && echo "Do not run as root!" && exit
 
 function usage()
 {
@@ -38,23 +38,23 @@ function check_stream_of_user()
 
 	#Returns a stream object if live
 	#https://github.com/justintv/Twitch-API/blob/master/v3_resources/streams.md
-	stream_object=`curl -s -H 'Accept: application/vnd.twitchtv.v3+json' \
-	-X GET https://api.twitch.tv/kraken/streams/$user_name`
+	stream_object="$(curl -s -H 'Accept: application/vnd.twitchtv.v3+json' \
+	-X GET https://api.twitch.tv/kraken/streams/$user_name)"
 
 	#parsing output
-	user_check=`echo "$stream_object" |grep -o "\"stream\":null"`
-	user_error=`echo "$stream_object" |grep "\"error\":"`
+	user_check="$(echo "$stream_object" | grep -o "\"stream\":null")"
+	user_error="$(echo "$stream_object" | grep "\"error\":")"
 
 	if [[ $user_check == "\"stream\":null" ]]; then
-		echo " offline `date +%T`"
+		echo " offline $(date +%T)"
 		#first argument of notify func is status!
 		notify "offline"
 	else
 		if [[ -z $user_error ]]; then
-			echo " online `date +%T`"
+			echo " online $(date +%T)"
 			notify "online"
 		else
-			echo " error `date +%T`"
+			echo " error $(date +%T)"
 			notify "error"
 		fi
 	fi
@@ -149,6 +149,6 @@ do
 		exit 0
 	else
 		echo "Waiting $wait_to_check seconds to check again"
-		sleep $wait_to_check
+		sleep "$wait_to_check"
 	fi
 done
