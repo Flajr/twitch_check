@@ -3,7 +3,7 @@
 
 function usage()
 {
-	echo "$(basename $0) [OPTIONS] or [USER]"
+	echo "$(basename "$0") [OPTIONS] or [USER]"
 	echo "-f [FILE]    path to file with users names"
 	echo "-h | --help  show usage"
 	echo "-n           show notification"
@@ -39,7 +39,7 @@ function check_stream_of_user()
 	#Returns a stream object if live
 	#https://github.com/justintv/Twitch-API/blob/master/v3_resources/streams.md
 	stream_object="$(curl -s -H 'Accept: application/vnd.twitchtv.v3+json' \
-	-X GET https://api.twitch.tv/kraken/streams/$user_name)"
+	-X GET https://api.twitch.tv/kraken/streams/"$user_name")"
 
 	#parsing output
 	user_check="$(echo "$stream_object" |grep -o "\"stream\":null")"
@@ -130,7 +130,7 @@ while :
 do
 	if [[ -n $file_name ]]; then
 	#check stream of all users from file ($file_name)
-		for user in $(cat $file_name |awk '{print $1}'); do
+		for user in $(awk '{print $1}' < "$file_name"); do
 			check_stream_of_user "$user"
 		done
 	else
