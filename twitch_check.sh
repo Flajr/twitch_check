@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 [[ `id -u` -eq 0 ]] && echo "Do not run as root!" && exit
 
 function usage()
