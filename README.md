@@ -1,10 +1,14 @@
 # twitch_check
-Check if your favorites streamers are online! Write names down in file and let program show notification for you if streamer came live.
 
-#Requirements
+Check if your favorites streamers are online!
+Write names down in file and let program show notification for you if streamer came live.
+
+## Requirements
+
 Install 'curl' and (optionaly for notification) 'libnotify-bin'
 
-#Usage
+## Usage
+
 ```bash
 twitch_check [OPTIONS] or [USER]
 -f [FILE]    path to file with users names
@@ -15,7 +19,8 @@ twitch_check [OPTIONS] or [USER]
 -w [SECONDS] wait seconds (>=30) to check status again
 ```
 
-#Example
+## Example
+
 ```bash
 $ ./twitch_check.sh -u fattypillow -w60
 Checking stream of fattypillow ... offline 16:38:44
@@ -24,8 +29,10 @@ Checking stream of fattypillow ... offline 16:39:45
 Waiting 60 seconds to check again
 Checking stream of fattypillow ... offline 16:40:47
 ```
+
 ```bash
-$ ./twitch_check.sh -n -f favorite_twitch_users.txt #check users from file and show notification (require libnotify-bin)
+#check users from file and show notification (require libnotify-bin)
+$ ./twitch_check.sh -n -f favorite_twitch_users.txt
 Checking stream of fattypillow ... offline 16:55:34
 Checking stream of flyguncz ... offline 16:55:35
 Checking stream of gogomantv ... offline 16:55:37

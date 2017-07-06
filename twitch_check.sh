@@ -1,15 +1,15 @@
-#!/bin/bash
-[[ `id -u` -eq 0 ]] && echo "Do not run as root!" && exit
+#!/usr/bin/env bash
+[[ "$(id -u)" -eq 0 ]] && echo "Do not run as root!" && exit
 
 function usage()
 {
-	echo "$0 [OPTIONS] or [USER]"
-	echo "-f [FILE]    path to file with users names"
-	echo "-h | --help  show usage"
-	echo "-n           show notification"
-	echo "-o           show online notify only (this use option -n too)"
-	echo "-u [USER]    check (one) user name (surpass file)"
-	echo "-w [SECONDS] wait seconds (>=30) to check status again"
+	printf "%s\n" "$(basename "$0") [OPTIONS] or [USER]"
+	printf "%s\n" "-f [FILE]    path to file with users names"
+	printf "%s\n" "-h | --help  show usage"
+	printf "%s\n" "-n           show notification"
+	printf "%s\n" "-o           show online notify only (this use option -n too)"
+	printf "%s\n" "-u [USER]    check (one) user name (surpass file)"
+	printf "%s\n" "-w [SECONDS] wait seconds (>=30) to check status again"
 }
 
 #Send notification to desktop with "notify-send" part of libnotify-bin
@@ -34,27 +34,27 @@ function check_stream_of_user()
 	#read user_name
 	user_name=$1
 
-	echo -n "Checking stream of $user_name ..."
+	printf "%s" "Checking stream of $user_name ..."
 
 	#Returns a stream object if live
 	#https://github.com/justintv/Twitch-API/blob/master/v3_resources/streams.md
-	stream_object=`curl -s -H 'Accept: application/vnd.twitchtv.v3+json' \
-	-X GET https://api.twitch.tv/kraken/streams/$user_name`
+	stream_object="$(curl -s -H 'Accept: application/vnd.twitchtv.v3+json' \
+	-X GET https://api.twitch.tv/kraken/streams/"$user_name")"
 
 	#parsing output
-	user_check=`echo "$stream_object" |grep -o "\"stream\":null"`
-	user_error=`echo "$stream_object" |grep "\"error\":"`
+	user_check="$(printf "%s\n" "$stream_object" |grep -o "\"stream\":null")"
+	user_error="$(printf "%s\n" "$stream_object" |grep "\"error\":")"
 
 	if [[ $user_check == "\"stream\":null" ]]; then
-		echo " offline `date +%T`"
+		printf "%s\n" " offline $(date +%T)"
 		#first argument of notify func is status!
 		notify "offline"
 	else
 		if [[ -z $user_error ]]; then
-			echo " online `date +%T`"
+			printf "%s\n" " online $(date +%T)"
 			notify "online"
 		else
-			echo " error `date +%T`"
+			printf "%s\n" " error $(date +%T)"
 			notify "error"
 		fi
 	fi
@@ -82,7 +82,7 @@ while getopts :now:u:f: opt; do
 			if [[ $OPTARG =~ ^[3-9][0-9]+ ]]; then
 				wait_to_check=$OPTARG
 			else
-				echo "BAD PARAMETER: seconds >= 30"
+				printf "%s\n" "BAD PARAMETER: seconds >= 30"
 				exit 5
 			fi
 		;;
@@ -103,23 +103,23 @@ while getopts :now:u:f: opt; do
 			if [[ -r $OPTARG ]]; then
 				file_name=$OPTARG
 			else
-				echo "NOT FOUND: $OPTARG"
+				printf "%s\n" "NOT FOUND: $OPTARG"
 				exit 2
 			fi
 
 			if [[ ! -s $OPTARG ]]; then
-				echo "EMPTY: $OPTARG"
+				printf "%s\n" "EMPTY: $OPTARG"
 				exit 3
 			fi
 		;;
 
 		:)
-			echo "REQUIRE ARGUMENT: -$OPTARG"
+			printf "%s\n" "REQUIRE ARGUMENT: -$OPTARG"
 			exit 1
 		;;
 
 		*)
-			echo "INVALID OPTION: $OPTARG"
+			printf "%s\n" "INVALID OPTION: $OPTARG"
 			usage
 			exit 4
 		;;
@@ -130,7 +130,7 @@ while :
 do
 	if [[ -n $file_name ]]; then
 	#check stream of all users from file ($file_name)
-		for user in $(cat $file_name |awk '{print $1}'); do
+		for user in $(awk '{print $1}' < "$file_name"); do
 			check_stream_of_user "$user"
 		done
 	else
@@ -139,7 +139,7 @@ do
 		elif [[ -n $user ]]; then
 			check_stream_of_user "$user"
 		else
-			echo "NO USER TO TEST"
+			printf "%s\n" "NO USER TO TEST"
 			exit 6
 		fi
 	fi
@@ -148,7 +148,7 @@ do
 	if [[ -z $wait_to_check ]]; then
 		exit 0
 	else
-		echo "Waiting $wait_to_check seconds to check again"
-		sleep $wait_to_check
+		printf "%s\n" "Waiting $wait_to_check seconds to check again"
+		sleep "$wait_to_check"
 	fi
 done
