@@ -42,8 +42,8 @@ function check_stream_of_user()
 	-X GET https://api.twitch.tv/kraken/streams/$user_name)"
 
 	#parsing output
-	user_check="$(echo "$stream_object" | grep -o "\"stream\":null")"
-	user_error="$(echo "$stream_object" | grep "\"error\":")"
+	user_check="$(echo "$stream_object" |grep -o "\"stream\":null")"
+	user_error="$(echo "$stream_object" |grep "\"error\":")"
 
 	if [[ $user_check == "\"stream\":null" ]]; then
 		echo " offline $(date +%T)"
