@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 [[ `id -u` -eq 0 ]] && echo "Do not run as root!" && exit
 
 function usage()
@@ -92,7 +92,7 @@ while getopts :now:u:f: opt; do
 			uoption=1
 		;;
 
-		f)	
+		f)
 			#if -u flag specified surpass file (just continue)
 			if [[ $uoption -eq 1 ]]; then
 				continue
@@ -112,7 +112,7 @@ while getopts :now:u:f: opt; do
 				exit 3
 			fi
 		;;
-		
+
 		:)
 			echo "REQUIRE ARGUMENT: -$OPTARG"
 			exit 1
